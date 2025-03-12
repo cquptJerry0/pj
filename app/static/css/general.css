@@ -1,0 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+::selection {
+    color: #c9302c;
+    background-color: #b2dba1;
+}

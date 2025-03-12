@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+    <style>
+        .container {
+            margin-top: 90px;
+        }
+        .container p {
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="alert alert-danger" role="alert">
+            <p>
+                数据不存在
+                <span class="glyphicon glyphicon-question-sign"></span>
+                <span class="glyphicon glyphicon-question-sign"></span>
+                <span class="glyphicon glyphicon-question-sign"></span>
+                请重新输入数据！
+                <a href="/" class="alert-link">返回主页</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            $(".footer").hide();
+        });
+    </script>
+{% endblock %}
