@@ -23,11 +23,7 @@
             padding-right: 3%;
         }
 
-        .panel-body table tr th {
-            text-align: center;
-        }
-
-        .panel-body table tr td {
+        .panel-body table tr th, .panel-body table tr td {
             text-align: center;
         }
 
@@ -241,156 +237,90 @@
         let nid = 0;
 
         $(function () {
-            // 导航条选择
+            // 初始化导航条
+            initNavbar();
+
+            // 绑定事件
+            bindEvents();
+
+            // 检查分页
+            checkPagination();
+        });
+
+        function initNavbar() {
             $("#index").removeClass("active");
             $("#choose_city").removeClass("active");
             $("#management").addClass("active");
+        }
 
-            // 判断删除完成后当前页的是否存在
+        function bindEvents() {
+            $("td").click(detail);
+            $("#add").click(add);
+            $(".edit").click(edit);
+            $(".delete").click(_delete);
+            $("#btnSubmit").click(submitForm);
+        }
+
+        function checkPagination() {
             let flag = $(".pagination").children().last().children().children();
             if(flag) flag.trigger("click");
+        }
 
-            // 调用查看字段内容详情功能
-            $("td").click(detail);
+        function submitForm() {
+            let title = $("#myModalLabel").text();
+            let formData = new FormData();
+            appendFormData(formData);
 
-            // 模态窗—民居新建功能
-            $("#add").click(add);
+            if(title == "新建民居") {
+                sendAjaxRequest("/resident/add/", formData, "创建成功!");
+            } else if(title == "编辑民居") {
+                sendAjaxRequest(`/resident/${nid}/edit/`, formData, "编辑成功!");
+            } else if(title == "删除民居") {
+                sendAjaxRequest(`/resident/${nid}/delete/`, null, "删除成功!", "get");
+            }
+        }
 
-            // 模态窗—民居编辑功能
-            $(".edit").click(edit);
+        function appendFormData(formData) {
+            let fields = ["resident_province", "resident_number", "resident_type", "resident_overview", "distribution", "structure", "construct", "represent_building", "factor", "comparison_evolution"];
+            fields.forEach(field => {
+                formData.append(field, $(`#id_${field}`).val());
+            });
+            let attached_picture = $("#id_attached_picture")[0].files;
+            for(let i = 0; i < attached_picture.length; i++) {
+                formData.append("attached_picture", attached_picture[i]);
+            }
+        }
 
-            // 模态窗—民居删除功能
-            $(".delete").click(_delete);
-
-            // 模态窗确认功能
-            $("#btnSubmit").click(function () {
-                // 获取当前模态窗的标题
-                let title = $("#myModalLabel").text();
-                // 获取当前的表单数据
-                let formData = new FormData();
-                let resident_province = $("#id_resident_province").val();
-                formData.append("resident_province", resident_province)
-                let resident_number = $("#id_resident_number").val();
-                formData.append("resident_number", resident_number)
-                let resident_type = $("#id_resident_type").val();
-                formData.append("resident_type", resident_type)
-                let resident_overview = $("#id_resident_overview").val();
-                formData.append("resident_overview", resident_overview)
-                let distribution = $("#id_distribution").val();
-                formData.append("distribution", distribution)
-                let structure = $("#id_structure").val();
-                formData.append("structure", structure);
-                let construct = $("#id_construct").val();
-                formData.append("construct", construct);
-                let represent_building = $("#id_represent_building").val();
-                formData.append("represent_building", represent_building);
-                let factor = $("#id_factor").val();
-                formData.append("factor", factor);
-                let comparison_evolution = $("#id_comparison_evolution").val();
-                formData.append("comparison_evolution", comparison_evolution);
-                let attached_picture = $("#id_attached_picture")[0].files;
-                for(let i = 0; i < attached_picture.length; i++) {
-                    formData.append("attached_picture", attached_picture[i]);
-                }
-
-                // 根据标题判断当前模态窗应该 向后台发送什么 ajax 请求
-                if(title == "新建民居") {
-                    // 清空所有错误信息
-                    $(".error-msg").empty();
-                    // 向后台发送 ajax 新建请求
-                    $.ajax({
-                        url: "/resident/add/",
-                        type: "post",
-                        data: formData,
-                        processData: false,            //不处理数据
-                        contentType: false,           //不设置内容类型，按原格式传输
-                        success: function (res) {
-                            if(res.status) {
-                                alert("创建成功!");
-
-                                // 清空表单 $("#formModal") 是 jQuery 对象 -> $("#formModal")[0] DOM 对象
-                                $("#formModal")[0].reset();
-
-                                // 隐藏对话框
-                                $("#myModal").modal("hide");
-
-                                // 刷新页面
-                                location.reload();
-                            }
-                            else {
-                                // 把错误信息显示在对话框中
-                                if(res.error) {
-                                    $.each(res.error, function (name, errorList) {
-                                       $("#id_" + name).next().text(errorList[0]);
-                                    })
-                                }
-                            }
-                        }
-                    });
-                }
-
-                if(title == "编辑民居") {
-                    // 清空所有错误信息
-                    $(".error-msg").empty();
-                    // 向后台发送 ajax 编辑请求
-                    $.ajax({
-                        url: "/resident/" + nid + "/edit/",
-                        type: "post",
-                        data: formData,
-                        processData: false,            //不处理数据
-                        contentType: false,           //不设置内容类型，按原格式传输
-                        success: function (res) {
-                            if(res.status) {
-                                alert("编辑成功!");
-
-                                // 清空表单 $("#formModal") 是 jQuery 对象 -> $("#formModal")[0] DOM 对象
-                                $("#formModal")[0].reset();
-
-                                // 关闭对话框
-                                $("#myModal").modal("hide");
-
-                                // 刷新页面
-                                location.reload();
-                            }
-                            else {
-                                // 把错误信息显示在对话框中
-                                if(res.error) {
-                                    $.each(res.error, function (name, errorList) {
-                                       $("#id_" + name).next().text(errorList[0]);
-                                    })
-                                }
-                            }
-                        }
-                    });
-                }
-
-                if(title == "删除民居") {
-                    // 向后台发送 ajax 删除请求
-                    $.ajax({
-                        url: "/resident/" + nid + "/delete/",
-                        type: "get",
-                        dataType: "JSON",
-                        success: function (res) {
-                            if(res.status) {
-                                alert("删除成功!");
-
-                                // 隐藏对话框
-                                $("#myModal").modal("hide");
-
-                                // 刷新页面
-                                location.reload();
-                            }
-                            else {
-                                alert(res.error);
-
-                                // 隐藏对话框
-                                $("#myModal").modal("hide");
-                            }
-                        }
-                    });
+        function sendAjaxRequest(url, data, successMessage, type="post") {
+            $.ajax({
+                url: url,
+                type: type,
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    if(res.status) {
+                        alert(successMessage);
+                        $("#formModal")[0].reset();
+                        $("#myModal").modal("hide");
+                        location.reload();
+                    } else {
+                        displayErrors(res.error);
+                    }
+                },
+                error: function () {
+                    alert("请求失败，请稍后重试。");
                 }
             });
-        });
+        }
+
+        function displayErrors(errors) {
+            if(errors) {
+                $.each(errors, function (name, errorList) {
+                    $(`#id_${name}`).next().text(errorList[0]);
+                });
+            }
+        }
 
         // 查看字段内容详情功能
         function detail() {
@@ -468,7 +398,7 @@
                                     // 字符串转数组
                                     value = value.replace("[", "");
                                     value = value.replace("]", "");
-                                    value = value.replaceAll("\'", "");
+                                    value = value.replaceAll("'", "");
                                     value = value.replaceAll(" ", "")
                                     value = value.split(",");
                                     // 增加的 HTML 代码

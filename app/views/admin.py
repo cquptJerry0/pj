@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.contrib import admin
+from app.models import ResidentsInfo
 
 
 def admin_login(request):
@@ -13,8 +15,8 @@ def admin_login(request):
         return render(request, 'admin_login.html')
 
     # 如果当前是表单 post 请求，得到当前的管理员输入的用户名和密码
-    admin_name = request.POST.get('admin_name', '');
-    password = request.POST.get('password', '');
+    admin_name = request.POST.get('admin_name', '')
+    password = request.POST.get('password', '')
 
     # 当前简单设置的三位初始管理员
     admin_list = [
@@ -68,6 +70,9 @@ def admin_logout(request):
 
     # 重定向到登录页面
     return redirect('/admin/login/')
+
+
+admin.site.register(ResidentsInfo)
 
 
 

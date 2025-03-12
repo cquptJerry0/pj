@@ -1,3 +1,6 @@
+# 将模型代码移动到 residents/models.py
+# 这里假设 models.py 中的内容是关于居民信息的
+
 from django.db import models
 
 
