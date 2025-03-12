@@ -25,8 +25,10 @@ SECRET_KEY = 'django-insecure-%41#yt#a=ci0++ujn7#7i_d!)v0mb5cwq8e%re1kjmyh%33neo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
+# 静态文件配置
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 收集静态文件到此目录
 
 # Application definition
 
