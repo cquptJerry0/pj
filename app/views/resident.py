@@ -11,13 +11,14 @@ from app.utils.pagination import Pagination
 from app.utils.bootstrap import BootStrapModelForm
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
+from app.utils.widgets import MultipleFileInput
 
 
 class ResidentModelForm(BootStrapModelForm):
     attached_picture = forms.FileField(
         label='附图',
         required=False,
-        widget=forms.ClearableFileInput(attrs={'multiple': True})
+        widget=MultipleFileInput(attrs={'multiple': True})
     )
 
     bootstrap_exclude_fields = ['attached_picture']
@@ -82,7 +83,7 @@ class ResidentAddModelForm(BootStrapModelForm):
     attached_picture = forms.FileField(
         label='附图',
         required=False,
-        widget=forms.ClearableFileInput(attrs={'multiple': True})
+        widget=MultipleFileInput(attrs={'multiple': True})
     )
 
     bootstrap_exclude_fields = ['attached_picture']
